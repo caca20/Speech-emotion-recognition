@@ -32,26 +32,26 @@ urlcolor=blue
 \newpage
 
 \section{Uvod}
-Speech emotion recognition (SER) predstavlja problem prepoznavanja emocija na osnovu govora. Prepoznavanje emocija je nesto sto je ljudima prirodno i deo je njihove medusobne komunikacije, dok je prepoznavanje emocija od strane računara nešto što je i dalje predmet istraživanja. Prepoznavanje emocija iz govora je najkorisnije kada su u pitanju aplikacije, kada postoji neki vid komunikacije izmedu čoveka i računara. Dodavanje emocija računarima je prepoznato kao ključni faktor u tome da mašine sve više teže ljudskom ponašanju.
+Speech emotion recognition (SER) predstavlja problem prepoznavanja emocija na osnovu govora. Prepoznavanje emocija je nesto sto je ljudima prirodno i deo je njihove međusobne komunikacije, dok je prepoznavanje emocija od strane računara nešto što je i dalje predmet istraživanja. Prepoznavanje emocija iz govora je najkorisnije kada su u pitanju aplikacije, kada postoji neki vid komunikacije izmedu čoveka i računara. Dodavanje emocija računarima je prepoznato kao ključni faktor u tome da mašine sve više teže ljudskom ponašanju.
 
 Dakle, cilj je da na osnovu snimaka glasova konstruišemo dobar aparat koji će što bolje klasifikovati emocije kod ljudi.
 
 \subsection{Zvuk}
-Znamo da su neke od osnovne osobina koje karakterišu ljudski glas intenzitet, visina i boja glasa.
+Znamo da su neke od osnovnih osobina koje karakterišu ljudski glas intenzitet, visina i boja glasa.
 Međutim, jedan od "problema" podataka jeste odrediti koje će karakteristike govora biti izvučene iz snimaka, na osnovu kojih će model učiti i na osnovu kojih će vršiti prepoznavanje. Zapravo, nije poznato koje će osobine uvek dovesti do najboljeg rezultata i klasifikacije. Neke informacije o tome možemo dobiti testiranjem velikog broja osobina, njihovim različitim kombinovanjem, itd. Neke od glavnih osobina zvuka su MFCC, zero-crossing rate, chroma, pitch, i druge. 
 
-\textit{MFCC (eng. Mel-frequency cepstral coefficients)} karakteristike predstavljaju foneme (najmanje jedinice zvuka) jer se u njima manifestuje oblik vokalnog trakta (koji je odgovoran za generisanje zvuka). Predstavlja skup vrednosti, tj. koeficijenata koje sažeto opisuju oblik spektralnog sloja i često se može koristiti za opisivanje boje tona.
+\textit{MFCC (eng. Mel-frequency cepstral coefficients)} predstavlja skup vrednosti, tj. koeficijenata koji sažeto opisuju oblik spektralnog sloja i često se može koristiti za opisivanje boje tona.
 
 
-Mel-skala je skala odnosa percipirane frekvencije od strane ljudi sa zapravo izmerenom frekvencijom zvuka. Raznim istraživanjima su naučnici došli do zaključka da ljudi mnogo bolje primećuju razliku u frekvencijama na nizim vrednostima herz-a, te je zadatak mel-skale da skalira frekvenciju kako bi se što više približila onome što ljudski sluh može da čuje, i prevazišla te razlike.
+Mel-skala je skala odnosa percipirane frekvencije od strane ljudi sa zapravo izmerenom frekvencijom zvuka. Raznim istraživanjima su naučnici došli do zaključka da ljudi mnogo bolje primećuju razliku u frekvencijama na nižim vrednostima herz-a, te je zadatak mel-skale da skalira frekvenciju kako bi se što više približila onome što ljudski sluh može da čuje, i prevazišla te razlike.
 
 Mel-spektrogram se izračunava primenom furijeove transformacije kako bi analizirali sadržaj frekvencije signala i kako bi ga konvertovali u mel-skalu.
-MFCC se dobija prebacivanjem frekvencije iz herz-a u mel skalu, zatim primene logaritma na mel reprezentaciju zvuka, a potom primenom diskretne kosinusne tranformacije, i rezultat predstavlja spektrum mel-frekvencije u odnosu na vreme, tj kreira se mfcc.
+MFCC se dobija prebacivanjem frekvencije iz herz-a u mel skalu, zatim primene logaritma na mel reprezentaciju zvuka, a potom primenom diskretne kosinusne tranformacije, i rezultat predstavlja spektrum mel-frekvencije u odnosu na vreme, tj. kreira se mfcc.
 
 
 \textit{Chroma} se odnosi na 12 različitih klasa visine tonova i predstavlja intezitet zvuka za svaku od 12 različitih klasa koje predstavljaju 12 različitih polutonova muzičke oktave. Glavno svojstvo ove odlike je ta da je otporan na promene u instrumentaciji i kvalitetu dok registruju harmonijske i melodijske karakteristike zvuka/muzike.
 
-\textit{Zero-crossing rate} meri koliko puta u određenom vremenskom intervalu je amplituda zvučnog signala prošla kroz vrednost nula. Rezultat ove karakteristike nam može reći kad je deo zvuka glasan, tj. kad je mala stopa prolaska kroz nulu, i kad nije glasan, odnosno kad je stopa visoka, jer energija tada manja. Stoga, ovaj metod nam efikasno razdvaja zvučni i nezvučni govor.
+\textit{Zero-crossing rate} meri koliko puta u određenom vremenskom intervalu je amplituda zvučnog signala prošla kroz vrednost nula. Rezultat ove karakteristike nam može reći kad je deo zvuka glasan, tj. kad je mala stopa prolaska kroz nulu, i kad nije glasan, odnosno kad je stopa visoka, jer energija tada manja. Stoga, ova karakteristika nam efikasno razdvaja glasni i tiši govor.
 \\
 \\
 \\
@@ -59,7 +59,7 @@ MFCC se dobija prebacivanjem frekvencije iz herz-a u mel skalu, zatim primene lo
 Na osnovu pronađenih podataka smo napravili dve verzije modela. Oba modela se zasnivaju na neuronskim mrežama, a detaljnije o njima ćemo kasnije u tekstu. 
 
 \subsection{Ulazni skup podataka}
-Za pravljenje našeg modela korišćena su tri seta podataka: 
+Za pravljenje našeg modela korišćena su dva seta podataka: 
     \begin{enumerate}
     \item Ryerson Audio-Visual Database of Emotional Speech and Song (Ravdess)
     \item Toronto emotional speech set (Tess)
@@ -71,6 +71,7 @@ Svi podaci su sačuvani u formatu .wav, tj. kao kratki glasovni snimci. Navedeni
 Zbog različitih načina čuvanja ulaznih podataka, za svaki skup smo pravili zasebnu funkciju koja će učitavati podatke iz direktorijuma i uzimati informaciju o tome koja je emocija u pitanju. Sve te funkcije smo objedinili u jednu zajedničku, load\_data. 
 
 Za rad sa audio snimcima koristili smo biblioteku \textit{librosa} koja pruža funkcije koje omogućavaju rad sa njim. U radu smo koristili samo mfc koeficijente, jer smo primetili, na osnovu prethodnih testiranja, da se tačnost rešenja ne menja uvođenjem drugih osobina. Na objedinjenom skupu podataka smo izvlačili potrebne mfcc karakteristike iz zvuka korišćenjem \textit{librosa.feature.mfcc} funkcije. Nad novooformljenim podacima smo dalje pravili model.
+
 Sledeći korak predstavlja podelu podataka na skup podataka za treniranje i skup podataka za testiranje, gde test skup čini 30\% od ukupnog skupa podataka. Taj skup koristimo za proveru tačnosti našeg modela. Da bi svi podaci bili ravnopravni koristimo StandardScaler koji standardizuje podatke, tj. tako transformišemo podatke da budu u normalnoj raspodeli.
 
 
@@ -80,12 +81,13 @@ Oba modela su zasnovana na neuronskim mrežama. Veštačke neuronske mreže opon
 Prvi predstavljeni model je napravljen pomoću funkcije MLPClassifier. Postavili smo batch\_size da bude malo veći, s obzirom da radimo sa većim brojem podataka.
 
 
-Drugi kreirani model je napravljen pomoću keras biblioteke i modela Sequential. Postavili smo 4 sloja. Na prva 3 unutrašnja sloja smo primenili funkciju aktivacije relu. Na poslednjem sloju smo iskoristili funkciju aktivacije softmax, koja vraća vektor vrednosti između 0 i 1, koji u zbiru treba da budu 1, tj. za svaku klasu vraća verovatnoću da taj podatak pripada baš toj klasi. Model smo kompajlirali koristeći Adam funkciju za optimizaciju; metriku koju smo postavili je tačnost (eng. accuracy) i za funkciju greške koju želimo da minimizujemo smo koristili categorical\_crossentropy.
+Drugi kreirani model je napravljen pomoću keras biblioteke i modela Sequential. Postavili smo 4 sloja. Na prva 3 unutrašnja sloja smo primenili funkciju aktivacije relu. Na poslednjem sloju smo iskoristili funkciju aktivacije softmax, koja vraća vektor vrednosti između 0 i 1, koji u zbiru treba da daju 1, tj. za svaku klasu vraća verovatnoću da taj podatak pripada baš toj klasi. Model smo kompajlirali koristeći Adam funkciju za optimizaciju; metriku koju smo postavili je tačnost (eng. accuracy) i za funkciju greške koju želimo da minimizujemo smo koristili categorical\_crossentropy.
 
 
 \newpage
 \section {Rezultati}
 Na osnovu dobijenih rezultata tačnosti i matrice konfuzije, možemo uporediti i dobiti informacije o efikasnosti naših modela.  
+
 Prvi model je klasifikovao podatke sa tačnošću od oko 88\%. 
 
 \begin{figure}[h]
@@ -94,7 +96,7 @@ Prvi model je klasifikovao podatke sa tačnošću od oko 88\%.
 \caption{Matrica konfuzije prvog modela}
 \end{figure}
 
-Na osnovu matrice konfuzije, možemo primetiti da model-1 relativno dobro klasifikuje. Najveći broj grešaka je za sreću, koje se greškom klasifikuje kao iznenađenje, a tu su i greške klasifikacije emocije gađenja kao strah.
+Na osnovu matrice konfuzije, možemo primetiti da model-1 relativno dobro klasifikuje. Najveći broj grešaka je za sreću, koja se greškom klasifikuje kao iznenađenje, kao i gađenje koje se klasifikuje kao strah.
 
 Model-2 je za nijansu slabiji od prvog modela, sa tačnošću od oko 84\%.
 
